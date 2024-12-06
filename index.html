@@ -37,26 +37,36 @@
   <label for="category-filter">Type:</label>
   <select id="category-filter">
     <option value="">All</option>
-    <option value="Trampoline Park">Trampoline Park</option>
+    <option value="Trampoline Park" selected="selected">Trampoline Park</option>
     <option value="Family Entertainment Center">Family Entertainment Center</option>
+    <option value="Kids Soft Play">Kids Soft Play</option>
+    <option value="Inflatable Park">Inflatable Park</option>
+    <option value="Unknown">Unknown</option>
   </select>
 
   <label for="brand-filter">Brand:</label>
   <select id="brand-filter">
     <option value="">All</option>
     <!-- Add brand options that exist in your data -->
-    <option value="BrandX">BrandX</option>
-    <option value="BrandY">BrandY</option>
-    <option value="BrandZ">BrandZ</option>
+    <option value="Ninja Kidz Action Parks">Ninja Kidz Action Parks</option>
+    <option value="Urban Air">Urban Air</option>
+    <option value="Sky Zone">Sky Zone</option>
+    <option value="Altitude">Altitude</option>
+    <option value="Get Air">Get Air</option>
+    <option value="Launch">Launch</option>
   </select>
   
   <label for="size-filter">BRAND_SIZE_GROUPED:</label>
   <select id="size-filter">
     <option value="">All</option>
     <!-- Add size group options that exist in your data -->
-    <option value="Small">Small</option>
-    <option value="Medium">Medium</option>
-    <option value="Large">Large</option>
+    <option value="0-3">0-3</option>
+    <option value="4-7">4-7</option>
+    <option value="8-10">8-10</option>
+    <option value="11-15">11-15</option>
+    <option value="16-25">16-25</option>
+    <option value="26-100">26-100</option>
+    <option value="100+">100+</option>
   </select>
 </div>
 
@@ -78,8 +88,10 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
 // Make sure these image files exist in a `logos` directory relative to this HTML file.
 var brandLogos = {
   "Sky Zone": "logos/skyzone.png",
-  "BrandY": "logos/BrandY.png",
-  "BrandZ": "logos/BrandZ.png"
+  "Urban Air": "logos/urbanair.png",
+  "Get Air": "logos/getair.png",
+  "Ninja Kidz Action Parks": "logos/nkdz.png",
+  "Altitude": "logos/altitude.png"
   // Add more brands as needed
 };
 
@@ -126,7 +138,7 @@ fetch('data.json')
       var customIcon = L.icon({
         iconUrl: logoUrl,
         iconSize: [30, 30],     // adjust size as needed
-        iconAnchor: [15, 30],   // half the width and full height for bottom anchor
+        iconAnchor: [30, 30],   // half the width and full height for bottom anchor
         popupAnchor: [0, -30]   // position popup above the icon
       });
 
