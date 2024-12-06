@@ -36,12 +36,12 @@
 <div id="controls">
   <label for="category-filter">Type:</label>
   <select id="category-filter">
-    <option value="Trampoline Park">Trampoline Park</option>
+  <option value="">All</option>
+    <option value="Trampoline Park" selected="selected">Trampoline Park</option>
     <option value="Family Entertainment Center">Family Entertainment Center</option>
     <option value="Kids Soft Play">Kids Soft Play</option>
     <option value="Inflatable Park">Inflatable Park</option>
     <option value="Unknown">Unknown</option>
-    <option value="">All</option>
   </select>
 
   <label for="brand-filter">Brand:</label>
@@ -99,7 +99,7 @@ var brandLogos = {
 var allMarkers = [];
 
 // Current filter values
-var currentTypeFilter = '';
+var currentTypeFilter = 'Trampoline Park';
 var currentBrandFilter = '';
 var currentSizeFilter = '';
 
