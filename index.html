@@ -143,7 +143,8 @@ fetch('data.json')
       });
 
       // Create a marker with the custom icon
-      var marker = L.marker([coords[1], coords[0]], { icon: customIcon }).bindPopup(props.name).
+     var marker = L.marker([coords[1], coords[0]], { icon: customIcon })
+        .bindPopup(props.name)
         .bindTooltip(props.name);  // Add tooltip on hover
 
       allMarkers.push({ marker: marker, feature: feature });
