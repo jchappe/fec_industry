@@ -237,7 +237,7 @@ fetch('data.json')
       });
 
       var marker = L.marker([coords[1], coords[0]], { icon: customIcon })
-        .bindPopup('<strong>Name: ' + props.name + '</strong><br> Brand: ' + (props.brand || '') + '<br> Brand Size: ' + (props.brand_size_grouped || ''))
+        .bindPopup('<strong>Name: ' + props.name + '</strong><br> Brand: ' + (props.brand || '') + '<br> Brand Size: ' + (props.brand_count || ''))
         .bindTooltip(props.name);
 
       allMarkers.push({ marker: marker, feature: feature });
