@@ -1,32 +1,102 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="initial-scale=1.0">
 <title>Locations Map</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
 <style>
+  /* Include your custom font */
+  @font-face {
+    font-family: 'Industry Black';
+    src: url('fonts/Industry-Black.woff2') format('woff2'),
+         url('fonts/Industry-Black.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+
   body {
-    font-family: Arial, sans-serif; 
     margin: 0; 
     padding: 0;
+    background: #1b1b1b;
+    color: #efefef;
+    font-family: 'Industry Black', Arial, sans-serif;
   }
+
   h1 {
-    margin: 10px;
+    margin: 20px;
+    font-size: 2em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: normal;
+    color: #ffffff;
   }
+
+  #controls {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background: #2a2a2a;
+  }
+
+  #controls label {
+    margin-right: 10px;
+    font-size: 0.9em;
+    color: #bfbfbf;
+  }
+
+  #controls select {
+    margin-right: 20px;
+    padding: 8px 10px;
+    border: none;
+    border-radius: 5px;
+    background: #3a3a3a;
+    color: #efefef;
+    font-size: 0.9em;
+    font-family: 'Industry Black', Arial, sans-serif;
+    transition: background 0.3s;
+    outline: none;
+  }
+
+  #controls select:hover {
+    background: #4a4a4a;
+  }
+
   #map {
     width: 100%; 
     height: 600px;
+    border-top: 1px solid #333;
   }
-  #controls {
-    margin: 10px;
+
+  /* Leaflet default controls adjustments */
+  .leaflet-control-attribution {
+    background: rgba(0,0,0,0.5) !important;
+    color: #fff !important;
   }
-  #controls label {
-    margin-right: 5px;
+  .leaflet-control-zoom a {
+    background: #3a3a3a !important;
+    color: #efefef !important;
+    border: none !important;
   }
-  #controls select {
-    padding: 5px; 
-    margin-right: 20px;
+  .leaflet-control-zoom a:hover {
+    background: #4a4a4a !important;
+  }
+
+  .leaflet-popup-content-wrapper {
+    background: #2a2a2a !important;
+    color: #efefef !important;
+    border-radius: 4px !important;
+  }
+
+  .leaflet-popup-tip {
+    background: #2a2a2a !important;
+  }
+
+  .leaflet-tooltip {
+    background: #333 !important;
+    color: #efefef !important;
+    border-radius: 4px !important;
+    font-size: 0.85em;
   }
 </style>
 </head>
@@ -36,7 +106,7 @@
 <div id="controls">
   <label for="category-filter">Type:</label>
   <select id="category-filter">
-  <option value="">All</option>
+    <option value="">All</option>
     <option value="Trampoline Park" selected="selected">Trampoline Park</option>
     <option value="Family Entertainment Center">Family Entertainment Center</option>
     <option value="Kids Soft Play">Kids Soft Play</option>
@@ -47,7 +117,6 @@
   <label for="brand-filter">Brand:</label>
   <select id="brand-filter">
     <option value="">All</option>
-    <!-- Add brand options that exist in your data -->
     <option value="Ninja Kidz Action Park">Ninja Kidz Action Park</option>
     <option value="Urban Air">Urban Air</option>
     <option value="Sky Zone">Sky Zone</option>
@@ -55,11 +124,10 @@
     <option value="Get Air">Get Air</option>
     <option value="Launch">Launch</option>
   </select>
-  
-  <label for="size-filter">BRAND_SIZE_GROUPED:</label>
+
+  <label for="size-filter">Brand Size Grouped:</label>
   <select id="size-filter">
     <option value="">All</option>
-    <!-- Add size group options that exist in your data -->
     <option value="0-3">0-3</option>
     <option value="4-7">4-7</option>
     <option value="8-10">8-10</option>
@@ -73,93 +141,75 @@
 <div id="map"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
-
 <script>
-// Initialize the map at a suitable zoom level and center
-var map = L.map('map').setView([39.8283, -98.5795], 4); // Centered on the US
+// Initialize the map
+var map = L.map('map').setView([39.8283, -98.5795], 4);
 
-// Use a light basemap for faster loading
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+// Use a light basemap for contrast
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
   maxZoom: 19,
   attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
 }).addTo(map);
 
 // Object mapping brands to their logo URLs
-// Make sure these image files exist in a `logos` directory relative to this HTML file.
 var brandLogos = {
   "Sky Zone": "logos/skyzone.png",
   "Urban Air": "logos/urbanair.png",
   "Get Air": "logos/getair.png",
   "Ninja Kidz Action Park": "logos/nkdz.png",
   "Altitude": "logos/altitude.png"
-  // Add more brands as needed
 };
 
-// Store all markers and their data so we can filter
+// Store all markers
 var allMarkers = [];
 
-// Current filter values
+// Current filters
 var currentTypeFilter = 'Trampoline Park';
 var currentBrandFilter = '';
 var currentSizeFilter = '';
 
-// Function to display markers based on all filters
 function displayMarkers() {
-  // Remove all markers first
   allMarkers.forEach(function(markerObj) {
     map.removeLayer(markerObj.marker);
   });
 
-  // Add markers that pass all filters
   allMarkers.forEach(function(markerObj) {
     var props = markerObj.feature.properties;
-
-    // Check filters
     if (currentTypeFilter && props.type !== currentTypeFilter) return;
     if (currentBrandFilter && props.brand !== currentBrandFilter) return;
     if (currentSizeFilter && props.BRAND_SIZE_GROUPED !== currentSizeFilter) return;
-
     markerObj.marker.addTo(map);
   });
 }
 
-// Fetch GeoJSON data
 fetch('data.json')
   .then(response => response.json())
   .then(data => {
     data.features.forEach(feature => {
       var coords = feature.geometry.coordinates;
       var props = feature.properties;
-
-      // Determine the correct logo for the brand
       var logoUrl = brandLogos[props.brand] || "logos/default.png";
 
-      // Create a custom icon
       var customIcon = L.icon({
         iconUrl: logoUrl,
-        iconSize: [30, 30],     // adjust size as needed
-        iconAnchor: [30, 30],   // half the width and full height for bottom anchor
-        popupAnchor: [0, -30]   // position popup above the icon
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+        popupAnchor: [0, -30]
       });
 
-      // Create a marker with the custom icon
-     var marker = L.marker([coords[1], coords[0]], { icon: customIcon })
-        .bindPopup(props.name)
-        .bindTooltip(props.name);  // Add tooltip on hover
+      var marker = L.marker([coords[1], coords[0]], { icon: customIcon })
+        .bindPopup('<strong>' + props.name + '</strong><br>' + (props.brand || '') + '<br>' + (props.BRAND_SIZE_GROUPED || ''))
+        .bindTooltip(props.name);
 
       allMarkers.push({ marker: marker, feature: feature });
     });
-
-    // Initially display all markers
     displayMarkers();
   });
 
-// Get filter dropdown elements
 var typeSelect = document.getElementById('category-filter');
 var brandSelect = document.getElementById('brand-filter');
 var sizeSelect = document.getElementById('size-filter');
 
-// Add event listeners for filter changes
 typeSelect.addEventListener('change', function() {
   currentTypeFilter = this.value;
   displayMarkers();
@@ -177,3 +227,4 @@ sizeSelect.addEventListener('change', function() {
 </script>
 </body>
 </html>
+
