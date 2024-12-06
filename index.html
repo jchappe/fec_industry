@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="initial-scale=1.0">
+<title>Locations Map</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+ integrity="sha256-sA+eC6Lo6A5xsNfune6Nbbj1GI4dU+Lv7loACw9gqY0=" crossorigin=""/>
+<style>
+  #map { width: 100%; height: 600px; }
+  body { font-family: Arial, sans-serif; margin:0; padding:0; }
+  h1 { margin: 10px; }
+</style>
+</head>
+<body>
+<h1>Trampoline Parks & Family Entertainment Centers</h1>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+ integrity="sha256-o9N1j7ULwTHuPBfZhRAWOrHPKbyf7gK8ViW2hHf6gY0="
+ crossorigin=""></script>
+
+<script>
+// Initialize the map
+var map = L.map('map').setView([39.8283, -98.5795], 4); // Centered on the US
+
+// Add a basemap layer
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+// Load GeoJSON data
+fetch('data.json')
+  .then(response => response.json())
+  .then(data => {
+    data.features.forEach(feature => {
+      var coords = feature.geometry.coordinates;
+      var props = feature.properties;
+      L.marker([coords[1], coords[0]]).addTo(map)
+        .bindPopup(props.name);
+    });
+  });
+</script>
+</body>
+</html>
