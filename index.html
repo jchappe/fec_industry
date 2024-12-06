@@ -177,7 +177,7 @@ function displayMarkers() {
     var props = markerObj.feature.properties;
     if (currentTypeFilter && props.type !== currentTypeFilter) return;
     if (currentBrandFilter && props.brand !== currentBrandFilter) return;
-    if (currentSizeFilter && props.BRAND_SIZE_GROUPED !== currentSizeFilter) return;
+    if (currentSizeFilter && props.brand_size_grouped !== currentSizeFilter) return;
     markerObj.marker.addTo(map);
   });
 }
@@ -198,7 +198,7 @@ fetch('data.json')
       });
 
       var marker = L.marker([coords[1], coords[0]], { icon: customIcon })
-        .bindPopup('<strong>' + props.name + '</strong><br>' + (props.brand || '') + '<br>' + (props.BRAND_SIZE_GROUPED || ''))
+        .bindPopup('<strong>' + props.name + '</strong><br>' + (props.brand || '') + '<br>' + (props.brand_size_grouped || ''))
         .bindTooltip(props.name);
 
       allMarkers.push({ marker: marker, feature: feature });
