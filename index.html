@@ -38,7 +38,7 @@
     letter-spacing: 1px;
     font-weight: normal;
     color: #ffffff;
-    text-align: center; /* Center the text */
+    text-align: center;
   }
 
   #controls {
@@ -245,7 +245,6 @@ fetch('data.json')
       });
 
       var marker = L.marker([coords[1], coords[0]], { icon: customIcon })
-        .bindPopup(''</strong><br> Brand: ' + (props.brand || '') + '<br> Brand Size: ' + (props.brand_count || ''))
         .bindPopup('Brand: ' + (props.brand || '') + '<br> Brand Size: ' + (props.brand_count || '') + '<br> Google Rating: ' + (props.rating || '' + '<br> Website: ' + (props.website || ''))
         .bindTooltip(props.name);
 
